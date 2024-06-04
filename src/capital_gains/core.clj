@@ -4,27 +4,25 @@
 						[capital-gains.logic.operation-reducer :as or]
 						[clojure.string :as str]))
 
-(defn split-str-at-pattern [str pattern]
-	(str/split str pattern))
+(defn split-str [str]
+	(str/split str #"==="))
 
 (defn fix-json-str [str]
 	(str/replace str "] [" "]===["))
 
-(defn foo [fo]
-	(reduce or/operation-reducer (h/create-new-accumulator) (js/json-to-list fo)))
+(defn reducer [input]
+	(reduce or/operation-reducer (h/create-new-accumulator) (js/json-to-list input)))
 
 (defn processar-entrada [linha]
-	(let [
-				fixed   (fix-json-str linha)
-				splited (split-str-at-pattern fixed #"===")
-				result  (mapv #(foo %) splited)
-
-				]
+	(let [result (mapv reducer
+								 (-> linha
+									 fix-json-str
+									 split-str))]
 
 		(println "-----------------------------------------------------------------")
-		(println "result" (mapv #(:tax %) result))
+		(println "result" (mapv :tax result))
 		(println "-----------------------------------------------------------------")
-		(mapv #(:tax %) result)
+		(mapv :tax result)
 		))
 
 (defn -main [& args]
