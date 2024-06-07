@@ -13,15 +13,11 @@
 (defn reducer [input]
 	(reduce or/operation-reducer (h/create-new-accumulator) (js/json-to-list input)))
 
-(defn processar-entrada [linha]
+(defn processar-entrada [input]
 	(let [result (mapv reducer
-								 (-> linha
+								 (-> input
 									 fix-json-str
 									 split-str))]
-
-		(println "-----------------------------------------------------------------")
-		(println "result" (mapv :tax result))
-		(println "-----------------------------------------------------------------")
 		(mapv :tax result)
 		))
 
@@ -29,4 +25,4 @@
 	(let [linha (read-line)]
 		(processar-entrada linha)))
 
-(processar-entrada "[{\"operation\":\"buy\", \"unit-cost\":10.00, \"quantity\": 10000}, {\"operation\":\"sell\", \"unit-cost\":20.00, \"quantity\": 5000}] [{\"operation\":\"buy\", \"unit-cost\":20.00, \"quantity\": 10000}, {\"operation\":\"sell\", \"unit-cost\":10.00, \"quantity\": 5000}]")
+;(processar-entrada "[{\"operation\":\"buy\", \"unit-cost\":10.00, \"quantity\": 10000}, {\"operation\":\"sell\", \"unit-cost\":20.00, \"quantity\": 5000}] [{\"operation\":\"buy\", \"unit-cost\":20.00, \"quantity\": 10000}, {\"operation\":\"sell\", \"unit-cost\":10.00, \"quantity\": 5000}]")
