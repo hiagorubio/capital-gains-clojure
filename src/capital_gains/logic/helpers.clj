@@ -5,7 +5,7 @@
 						))
 
 (s/defn is-buy-operation? [operation :- m/Operation]
-	(if (= (:operation operation) "buy") true false))
+	(= (:operation operation) "buy"))
 
 (s/defn calculate-profit [acc :- m/Accumulator operation :- m/Operation]
 	(let [dif (- (:unit-cost operation) (:weighted-average-price acc))]

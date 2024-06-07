@@ -8,11 +8,11 @@
 
 (s/defn operation-reducer
 	[acc operation]
-	(if (not (nil? operation))
+	(when operation
 		{
 		 :weighted-average-price (calculate/calculate-weighted-average-price acc operation)
 		 :quantity               (helpers/calculate-new-quantity acc operation)
 		 :tax                    (conj (:tax acc) (calculate/calculate-tax-if-needed acc operation))
 		 :loss                   (calculate/calculate-loss acc operation)
 		 }
-		nil))
+		))
