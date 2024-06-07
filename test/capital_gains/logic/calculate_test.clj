@@ -56,10 +56,6 @@
 
 	)
 
-(deftest return-empty-tax-test
-	(is (= (calculate/return-empty-tax) {:tax 0.00}))
-	)
-
 (deftest calc-operation-value-test
 	(is (= (calculate/calculate-operation-value (fixtures/create-operation "buy" 10 10))
 				100))
@@ -74,23 +70,18 @@
 
 (deftest operation-value-exceeds-tax-limit?-test
 	(testing "operation value exceeds limit"
-		(is (= (calculate/operation-value-exceeds-tax-limit? (fixtures/create-operation "sell" 20000.0 10))
-				true)))
+		(is (true? (calculate/operation-value-exceeds-tax-limit? (fixtures/create-operation "sell" 20000.0 10)))))
 	(testing "operation value exceeds limit by 0.1"
-		(is (= (calculate/operation-value-exceeds-tax-limit? (fixtures/create-operation "sell" 20000.1 1))
-					true)))
+		(is (true? (calculate/operation-value-exceeds-tax-limit? (fixtures/create-operation "sell" 20000.1 1)))))
 
 	(testing "operation value is the same of the limit"
-		(is (= (calculate/operation-value-exceeds-tax-limit? (fixtures/create-operation "sell" 20000.0 1))
-					false)))
+		(is (false? (calculate/operation-value-exceeds-tax-limit? (fixtures/create-operation "sell" 20000.0 1)))))
 
 	(testing "operation value is under the limit"
-		(is (= (calculate/operation-value-exceeds-tax-limit? (fixtures/create-operation "sell" 2 1))
-					false)))
+		(is (false? (calculate/operation-value-exceeds-tax-limit? (fixtures/create-operation "sell" 2 1)))))
 
 	(testing "operation value is zero"
-		(is (= (calculate/operation-value-exceeds-tax-limit? (fixtures/create-operation "sell" 2 0))
-					false)))
+		(is (false? (calculate/operation-value-exceeds-tax-limit? (fixtures/create-operation "sell" 2 0)))))
 	)
 
 (deftest apply-tax-test
@@ -110,24 +101,24 @@
 
 (deftest hass-loss?-test
 	(testing "has loss"
-		(is (= (calculate/hass-loss? -1) true)))
+		(is (true? (calculate/hass-loss? -1))))
 
 	(testing "has no loss"
-		(is (= (calculate/hass-loss? 0) false)))
+		(is (false? (calculate/hass-loss? 0))))
 
 	(testing "has no loss"
-		(is (= (calculate/hass-loss? 1) false)))
+		(is (false? (calculate/hass-loss? 1))))
 	)
 
 (deftest hass-profit?-test
 	(testing "has profit"
-		(is (= (calculate/hass-profit? 1) true)))
+		(is (true? (calculate/hass-profit? 1))))
 
 	(testing "has no profit"
-		(is (= (calculate/hass-profit? 0) false)))
+		(is (false? (calculate/hass-profit? 0))))
 
 	(testing "has no profit"
-		(is (= (calculate/hass-profit? -1) false)))
+		(is (false? (calculate/hass-profit? -1))))
 	)
 
 (deftest calculate-tax-deducting-loss-if-it-exists-test

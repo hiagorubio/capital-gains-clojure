@@ -1,6 +1,5 @@
 (ns capital-gains.logic.helpers-test
 	(:require [capital-gains.logic.helpers :as h]
-						[capital-gains.models :as m]
 						[clojure.test :refer (deftest is testing)]
 						[capital-gains.fixtures :as fixtures]
 						))
@@ -8,16 +7,16 @@
 
 (deftest is-buy-operation?-test
 	(testing "if its a buy operation"
-		(is (= (h/is-buy-operation? {:operation "buy"}) true)))
+		(is (true? (h/is-buy-operation? {:operation "buy"}))))
 
 	(testing "if isn't a buy operation"
-		(is (= (h/is-buy-operation? {:operation "sell"}) false)))
+		(is (false? (h/is-buy-operation? {:operation "sell"}))))
 
 	(testing "if isn't a buy operation"
-		(is (= (h/is-buy-operation? {:operation nil}) false)))
+		(is (false? (h/is-buy-operation? {:operation nil}))))
 
 	(testing "if isn't a buy operation"
-		(is (= (h/is-buy-operation? {:foo nil}) false)))
+		(is (false? (h/is-buy-operation? {:foo nil}))))
 
 	)
 

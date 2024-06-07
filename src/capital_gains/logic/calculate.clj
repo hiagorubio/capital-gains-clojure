@@ -20,18 +20,20 @@
 				(+ (:loss acc) (h/calculate-profit acc operation))
 				))))
 
-(s/defn return-empty-tax [] {:tax 0.00})
+(s/def return-empty-tax {:tax 0.00})
+(s/def tax 0.2)
+(s/def operation-limit 20000.00)
 
 (s/defn calculate-operation-value [operation :- m/Operation]
 	(* (:quantity operation) (:unit-cost operation)))
 
 (s/defn operation-value-exceeds-tax-limit? [operation]
-	(< 20000.00 (calculate-operation-value operation)))
+	(< operation-limit (calculate-operation-value operation)))
 
 (s/defn apply-tax [profit operation]
 	(if (operation-value-exceeds-tax-limit? operation)
-		{:tax (* profit 0.2)}
-		(return-empty-tax)))
+		{:tax (* profit tax)}
+		return-empty-tax))
 
 (s/defn hass-loss? [loss] (> 0 loss))
 (s/defn hass-profit? [profit-with-loss-deducted] (< 0 profit-with-loss-deducted))
@@ -44,7 +46,7 @@
 			(let [profit-with-loss-deducted (+ profit loss)]
 				(if (hass-profit? profit-with-loss-deducted)
 					 (apply-tax profit-with-loss-deducted operation)
-					(return-empty-tax)
+					 return-empty-tax
 					)
 				)
 			(apply-tax profit operation)
@@ -53,11 +55,11 @@
 (s/defn calculate-tax-if-needed :- m/Tax
 	[acc :- m/Accumulator operation :- m/Operation]
 	(if (h/is-buy-operation? operation)
-		(return-empty-tax)
+		return-empty-tax
 		(let [profit (h/calculate-profit acc operation)]
 			(if (hass-profit? profit)
 				(calculate-tax-deducting-loss-if-it-exists acc operation)
-				(return-empty-tax)))))
+				return-empty-tax))))
 
 (s/defn calculate-weighted-average-price
 	[acc :- m/Accumulator operation :- m/Operation]
@@ -69,11 +71,9 @@
 						new-quantity                  (:quantity operation)
 						unit-cost                     (:unit-cost operation)
 						]
-				(/
-					(+
-						(* actual-stocks-quantity actual-weighted-average-price)
-						(* new-quantity unit-cost))
-					(+ actual-stocks-quantity new-quantity))))
+				(-> (* actual-stocks-quantity actual-weighted-average-price)
+					  (+ (* new-quantity unit-cost))
+						(/ (+ actual-stocks-quantity new-quantity)))))
 		(:weighted-average-price acc)
 		)
 	)
